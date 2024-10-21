@@ -1,0 +1,53 @@
+<?sap.transform simple?>
+<tt:transform xmlns:tt="http://www.sap.com/transformation-templates" xmlns:if="http://www.sap.com/abapxml/types/class-pool/ZIF_NB_EXTRACTOR">
+
+  <tt:root name="ROOT" type="if:TY_CONTENT"/>
+
+  <tt:template>
+    <object>
+      <array name="codeSnippets">
+        <tt:loop name="codeSnippet" ref="ROOT.CODE_SNIPPETS">
+          <tt:apply name="codeSnippet">
+            <tt:with-root name="CS_ROOT"/>
+          </tt:apply>
+        </tt:loop>
+      </array>
+    </object>
+  </tt:template>
+
+  <tt:template name="codeSnippet">
+    <tt:context>
+      <tt:root name="CS_ROOT"/>
+    </tt:context>
+    <object>
+      <str name="objectName">
+        <tt:value ref="CS_ROOT.OBJNAME"/>
+      </str>
+      <str name="objectType">
+        <tt:value ref="CS_ROOT.OBJTYPE"/>
+      </str>
+      <str name="programName">
+        <tt:value ref="CS_ROOT.PROGNAME"/>
+      </str>
+      <str name="test">
+        <tt:value ref="CS_ROOT.TEST"/>
+      </str>
+      <str name="code">
+        <tt:value ref="CS_ROOT.CODE"/>
+      </str>
+      <str name="line">
+        <tt:value ref="CS_ROOT.LINE"/>
+      </str>
+      <str name="message">
+        <tt:value ref="CS_ROOT.MESSAGE"/>
+      </str>
+      <str name="before">
+        <tt:value ref="CS_ROOT.BEFORE"/>
+      </str>
+      <str name="after">
+        <tt:value ref="CS_ROOT.AFTER"/>
+      </str>
+    </object>
+  </tt:template>
+
+</tt:transform>
