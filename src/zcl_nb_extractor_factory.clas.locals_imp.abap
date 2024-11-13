@@ -793,6 +793,17 @@ class lcl_extractor_type_b implementation.
         ls_code_snippet-objtype = ls_tadir-object.
         insert ls_code_snippet into table rt_code_snippets.
       endif.
+
+      clear ls_code_snippet.
+      clear lt_upper_context_pre.
+      clear lt_upper_context_post.
+      clear lv_upper_context_pre.
+      clear lv_upper_context_post.
+      clear lt_lower_context_pre.
+      clear lt_lower_context_post.
+      clear lv_lower_context_pre.
+      clear lv_lower_context_post.
+
     endloop.
     "-----------------------------------------------------------------------------------------------
 
@@ -811,6 +822,29 @@ class lcl_extractor_type_b implementation.
       if ls_source(1) = '"'.
         continue.
       endif.
+      " Remove potential comments
+      find first occurrence of '"' in ls_source.
+      if sy-subrc = 0.
+        find first occurrence of |'| in ls_source.
+        if sy-subrc = 0.
+          " No thanks
+          exit.
+        endif.
+        find first occurrence of |\|| in ls_source.
+        if sy-subrc = 0.
+          " No thanks
+          exit.
+        endif.
+        data(ls_source_copy) = ls_source.
+        data(shift) = 0.
+        while ls_source_copy(1) <> '"'.
+          shift += 1.
+          shift ls_source_copy left.
+        endwhile.
+        ls_source = ls_source(shift).
+      endif.
+      " Convert everything to lower case
+      translate ls_source to lower case.
       insert value #( original_line_nr = sy-tabix
                       line             = ls_source ) into table rt_compare_source.
     endloop.
@@ -833,9 +867,9 @@ class lcl_extractor_type_b implementation.
         data ls_method_key type seocpdkey.
         call function 'ZNB_GET_METHOD_NAME_OF_INCLUDE' destination mv_rfcdest
           exporting
-            iv_progname       = <ls_finding_info_pre>-progname
+            iv_progname           = <ls_finding_info_pre>-progname
           importing
-            es_method_key     = ls_method_key
+            es_method_key         = ls_method_key
           exceptions
             include_not_found     = 1
             communication_failure = 2 message rfc_message
